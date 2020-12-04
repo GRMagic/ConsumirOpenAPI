@@ -1,0 +1,26 @@
+cd Desktop
+dotnet --version
+dotnet tool install --global Microsoft.dotnet-openapi --version 3.1.1
+dotnet new console -n ConsumirOpenAPI
+cd ConsumirOpenAPI
+dotnet openapi add url https://petstore.swagger.io/v2/swagger.json --output-file PetStore.json
+dotnet restore
+dotnet build
+code .
+
+using System;
+using System.Threading.Tasks;
+
+namespace ConsumirOpenAPI
+{
+    class Program
+    {
+        static async Task Main(string[] args)
+        {
+            using var httpClient = new System.Net.Http.HttpClient();
+            var api = new PetStoreClient(httpClient);
+            var pet = await api.GetPetByIdAsync(21221);
+            Console.WriteLine(pet.Name);
+        }
+    }
+}
